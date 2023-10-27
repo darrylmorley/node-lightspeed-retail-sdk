@@ -34,7 +34,7 @@ const sdk = new LightspeedRetailSDK({
 Fetching All Categories
 
 ```bash
-import Category from 'path-to-sdk/models/Category';
+import Category from 'node-lightspeed-retail-sdk/src/models/Category.js';
 
 const categoryModel = new Category(sdk);
 const categories = await categoryModel.getAll();
@@ -43,7 +43,7 @@ const categories = await categoryModel.getAll();
 Fetching a Specific Customer
 
 ```bash
-import Customer from 'path-to-sdk/models/Customer';
+import Customer from 'node-lightspeed-retail-sdk/src/models/Customer.js';
 
 const customerModel = new Customer(sdk);
 const customer = await customerModel.getById('CUSTOMER_ID');
