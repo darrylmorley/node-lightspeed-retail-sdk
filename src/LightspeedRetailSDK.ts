@@ -1,9 +1,21 @@
 import axios from "axios";
+import { ILightspeedRetailSDKOptions, HttpOperation, IResourceOptions } from "./types";
+require('dotenv').config()
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 class LightspeedRetailSDK {
-  constructor(opts) {
+  private clientID: string;
+  private clientSecret: string;
+  private refreshToken: string;
+  public accountID: string;
+  public baseUrl: string;
+  private maxRetries: number;
+  private lastResponse: any;
+  private accessToken: string | null;
+  private tokenExpiry: number | null;
+
+  constructor(opts: ILightspeedRetailSDKOptions) {
     const { clientID, clientSecret, refreshToken, accountID } = opts;
 
     this.clientID = clientID;
@@ -17,7 +29,7 @@ class LightspeedRetailSDK {
     this.tokenExpiry = null;
   }
 
-  async fetchToken() {
+  async fetchToken(): Promise<string> {
     const body = {
       grant_type: "refresh_token",
       client_id: this.clientID,
@@ -42,38 +54,41 @@ class LightspeedRetailSDK {
 
     this.tokenExpiry = Date.now() + tokenData.expires_in * 1000;
 
+    if (this.accessToken === null) {
+      throw new Error("Access token is null")
+    }
+
     return this.accessToken;
   }
 
-  async ensureToken() {
-    // If we don't have a token or it's expired, fetch a new one
-    if (!this.accessToken || Date.now() >= this.tokenExpiry) {
+  async ensureToken(): Promise<void> {
+    if (!this.accessToken || this.tokenExpiry === null || Date.now() >= this.tokenExpiry) {
       await this.fetchToken();
     }
   }
 
-  handleError(msg, err) {
+  handleError(msg: string, err: Error): void {
     console.error(`${msg} - ${err}`);
     throw err;
   }
 
-  setLastResponse = (response) => (this.lastResponse = response);
+  setLastResponse = (response: any): void => (this.lastResponse = response);
 
-  getRequestUnits = (operation) => {
+  getRequestUnits = (operation: HttpOperation): number => {
     const operationCosts = {
-      GET: 1,
-      POST: 10,
-      PUT: 10,
+      [HttpOperation.GET]: 1,
+      [HttpOperation.POST]: 10,
+      [HttpOperation.PUT]: 10,
     };
 
     return operationCosts[operation] || 10;
   };
 
-  handleRateLimit = async (options) => {
+  handleRateLimit = async (options: IResourceOptions) => {
     if (!this.lastResponse) return null;
 
     const { method } = options;
-    const requestUnits = this.getRequestUnits(method);
+    const requestUnits = this.getRequestUnits(method as HttpOperation);
     const rateHeader = this.lastResponse.headers["x-ls-api-bucket-level"];
 
     if (!rateHeader) return null;
@@ -96,7 +111,7 @@ class LightspeedRetailSDK {
     return delay;
   };
 
-  async getResource(options, retries = 0) {
+  async getResource(options: IResourceOptions, retries = 0): Promise<any> {
     this.handleRateLimit(options);
     await this.ensureToken();
 
@@ -108,25 +123,26 @@ class LightspeedRetailSDK {
     try {
       const res = await axios(options);
       this.lastResponse = res;
+      const responseData = res.data
       return {
-        data: res.data,
-        next: res.next,
-        previous: res.previous,
+        data: responseData,
+        next: responseData.next,
+        previous: responseData.previous,
       };
     } catch (err) {
-      if (retries < this.maxRetries) {
+      if (retries < this.maxRetries && err instanceof Error) {
         console.log(`Error: ${err}, retrying in 2 seconds...`);
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        return await this.getResource(options.url, retries + 1);
+        return await this.getResource({ ...options, url: options.url }, retries + 1);
       } else {
-        console.error(`Failed Request: `, err.message);
+        console.error(`Failed Request: `, err);
         throw err;
       }
     }
   }
 
-  async getAllData(options) {
-    let allData = [];
+  async getAllData(options: IResourceOptions): Promise<any> {
+    let allData: any = [];
     while (options.url) {
       const { data } = await this.getResource(options);
       let next = data["@attributes"].next;

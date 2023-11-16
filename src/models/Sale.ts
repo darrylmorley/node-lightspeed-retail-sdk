@@ -1,10 +1,14 @@
+import { IResourceOptions, IApiService } from "../types";
+
 class Sale {
-  constructor(apiService) {
+  private apiService: IApiService;
+
+  constructor(apiService: IApiService) {
     this.apiService = apiService;
   }
 
   getDayRange() {
-    const formatDateToUTC = (date) => {
+    const formatDateToUTC = (date: Date) => {
       const year = date.getUTCFullYear();
       const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are zero-based
       const day = String(date.getUTCDate()).padStart(2, "0");
@@ -26,11 +30,11 @@ class Sale {
 
   // Get all sales in date range, default today. Dates should be formatted as YYYY-MM-DD
   async getAll(
-    relations,
+    relations?: string,
     startDate = this.getDayRange().startTime + "T00:00:00.000Z",
     endDate = this.getDayRange().endTime + "T23:59:59.999Z"
   ) {
-    const options = {
+    const options: IResourceOptions = {
       url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale.json?timeStamp=%3E%3C%2C${startDate}%2C${endDate}&sort=timeStamp`,
       method: "GET",
     };
@@ -41,18 +45,26 @@ class Sale {
       const response = await this.apiService.getAllData(options);
       return response;
     } catch (error) {
-      return this.apiService.handleError("GET SALE ERROR [getAll]:", error);
+      if (error instanceof Error) {
+        return this.apiService.handleError("GET SALE ERROR [getAll]:", error);
+      } else {
+        console.error("An unknown error occurred: ", error);
+        throw error;
+      }
     }
   }
 
   // Get sale by ID
-  async getById(id, relations) {
+  async getById(id: string, relations?: string) {
     const options = {
       url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale/${id}.json?load_relations=["Customer", "SaleLines", "SalePayments"]`,
       method: "GET",
     };
 
-    if (!id) return this.apiService.handleError("You need to provide a saleID");
+    if (!id) {
+      const error = new Error("You need to provide a saleID");
+      return this.apiService.handleError("GET SALE ERROR [getById]:", error);
+    }
 
     if (relations) options.url = options.url + `?load_relations=${relations}`;
 
@@ -60,11 +72,16 @@ class Sale {
       const response = await this.apiService.getAllData(options);
       return response;
     } catch (error) {
-      return this.apiService.handleError("GET SALE ERROR [getById]:", error);
+      if (error instanceof Error) {
+        return this.apiService.handleError("GET SALE ERROR [getById]:", error);
+      } else {
+        console.error("An unknown error occurred: ", error);
+        throw error;
+      }
     }
   }
 
-  async getByItemId(itemID, relations) {
+  async getByItemId(itemID: string, relations?: string) {
     const options = {
       url: `${this.apiService.baseUrl}/${this.apiService.accountID}/SaleLine.json?itemID=${itemID}`,
       method: "GET",
@@ -76,7 +93,12 @@ class Sale {
       const response = await this.apiService.getAllData(options);
       return response;
     } catch (error) {
-      return this.apiService.handleError("GET SALE ERROR [getByItemId]:", error);
+      if (error instanceof Error) {
+        return this.apiService.handleError("GET SALE ERROR [getByItemId]:", error);
+      } else {
+        console.error("An unknown error occurred: ", error);
+        throw error;
+      }
     }
   }
 }
