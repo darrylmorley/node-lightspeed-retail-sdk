@@ -56,7 +56,7 @@ class Order {
     }
   }
 
-  async getByVendorId(id: string, relations: string) {
+  async getByVendorId(id: string, relations?: string) {
     const options = {
       url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Order.json?load_relations=["Vendor"]&vendorID=${id}`,
       method: "GET",

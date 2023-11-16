@@ -30,7 +30,7 @@ class MatrixProduct {
   }
 
   // Get Matrix Item by ID
-  async getById(id: string, relations: string) {
+  async getById(id: string, relations?: string) {
     const options = {
       url: `${this.apiService.baseUrl}/${this.apiService.accountID}/ItemMatrix/${id}.json`,
       method: "GET",

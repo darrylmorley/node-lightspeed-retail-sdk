@@ -8,7 +8,7 @@ class Vendor {
   }
 
   // GET all vendors
-  async getAll(relations: string): Promise<any> {
+  async getAll(relations?: string): Promise<any> {
     const options = {
       url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Vendor.json`,
       method: "GET",
