@@ -1,6 +1,6 @@
 import { IResourceOptions, IApiService } from "../types";
 
-class Sale {
+class SaleLine {
   private apiService: IApiService;
 
   constructor(apiService: IApiService) {
@@ -35,7 +35,7 @@ class Sale {
     endDate = this.getDayRange().endTime + "T23:59:59.999Z"
   ) {
     const options: IResourceOptions = {
-      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale.json?timeStamp=%3E%3C%2C${startDate}%2C${endDate}&sort=timeStamp`,
+      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/SaleLine.json?timeStamp=%3E%3C%2C${startDate}%2C${endDate}&sort=timeStamp`,
       method: "GET",
     };
 
@@ -46,7 +46,7 @@ class Sale {
       return response;
     } catch (error) {
       if (error instanceof Error) {
-        return this.apiService.handleError("GET SALE ERROR [getAll]:", error);
+        return this.apiService.handleError("GET SALELINE ERROR [getAll]:", error);
       } else {
         console.error("An unknown error occurred: ", error);
         throw error;
@@ -54,16 +54,16 @@ class Sale {
     }
   }
 
-  // Get sale by ID
+  // Get saleline by ID
   async getById(id: string, relations?: string) {
     const options = {
-      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale/${id}.json?load_relations=["Customer", "SaleLines", "SalePayments"]`,
+      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/SaleLine/${id}.json`,
       method: "GET",
     };
 
     if (!id) {
       const error = new Error("You need to provide a saleID");
-      return this.apiService.handleError("GET SALE ERROR [getById]:", error);
+      return this.apiService.handleError("GET SALELINE ERROR [getById]:", error);
     }
 
     if (relations) options.url = options.url + `?load_relations=${relations}`;
@@ -73,7 +73,7 @@ class Sale {
       return response;
     } catch (error) {
       if (error instanceof Error) {
-        return this.apiService.handleError("GET SALE ERROR [getById]:", error);
+        return this.apiService.handleError("GET SALELINE ERROR [getById]:", error);
       } else {
         console.error("An unknown error occurred: ", error);
         throw error;
@@ -83,7 +83,7 @@ class Sale {
 
   async getByItemId(itemID: string, relations?: string) {
     const options = {
-      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/SaleLine.json?itemID=${itemID}`,
+      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/SaleLine.json?load_relations=["Item"]&itemID=${itemID}`,
       method: "GET",
     };
 
@@ -94,7 +94,28 @@ class Sale {
       return response;
     } catch (error) {
       if (error instanceof Error) {
-        return this.apiService.handleError("GET SALE ERROR [getByItemId]:", error);
+        return this.apiService.handleError("GET SALELINE ERROR [getByItemId]:", error);
+      } else {
+        console.error("An unknown error occurred: ", error);
+        throw error;
+      }
+    }
+  }
+
+  async getByVendorId(vendorID: string, relations?: string) {
+    const options = {
+      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/SaleLine.json?load_relations=["Item"]&Item.defaultVendorID=${vendorID}`,
+      method: "GET",
+    };
+
+    if (relations) options.url = options.url + `&load_relations=${relations}`;
+
+    try {
+      const response = await this.apiService.getAllData(options);
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return this.apiService.handleError("GET SALELINE ERROR [getByVendorId]:", error);
       } else {
         console.error("An unknown error occurred: ", error);
         throw error;
@@ -103,4 +124,4 @@ class Sale {
   }
 }
 
-export default Sale;
+export default SaleLine;
