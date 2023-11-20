@@ -4,7 +4,6 @@ class Category {
     constructor(apiService) {
         this.apiService = apiService;
     }
-    // Get all categories
     async getAll(relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Category.json`,
@@ -26,7 +25,6 @@ class Category {
             }
         }
     }
-    // Get category by ID
     async getById(id, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Category/${id}.json`,

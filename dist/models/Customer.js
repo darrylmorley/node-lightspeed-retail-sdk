@@ -4,7 +4,6 @@ class Customer {
     constructor(apiService) {
         this.apiService = apiService;
     }
-    // GET all customers
     async getAll(relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Customer.json`,
@@ -26,7 +25,6 @@ class Customer {
             }
         }
     }
-    // GET customer by ID
     async getById(id, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Customer/${id}.json`,

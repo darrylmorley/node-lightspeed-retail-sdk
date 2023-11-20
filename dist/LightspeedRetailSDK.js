@@ -1,9 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(require("axios"));
+const axios_1 = require("axios");
 const types_1 = require("./types");
 require('dotenv').config();
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,7 +23,7 @@ class LightspeedRetailSDK {
             const rateHeader = this.lastResponse.headers["x-ls-api-bucket-level"];
             if (!rateHeader)
                 return null;
-            const [used, available] = rateHeader.split("/").map(Number); // Convert to numbers
+            const [used, available] = rateHeader.split("/").map(Number);
             const availableUnits = available - used;
             let delay;
             if (availableUnits <= 0) {
@@ -38,7 +35,7 @@ class LightspeedRetailSDK {
                 delay = Math.ceil((unitWait / dripRate) * 1000);
             }
             else {
-                return 0; // If there's enough available units, no delay is needed
+                return 0;
             }
             await sleep(delay);
             return delay;

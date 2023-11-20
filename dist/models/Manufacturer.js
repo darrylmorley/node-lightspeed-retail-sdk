@@ -4,7 +4,6 @@ class Manufacturer {
     constructor(apiService) {
         this.apiService = apiService;
     }
-    // Get all manufacturers
     async getAll(relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Manufacturer.json`,
@@ -26,7 +25,6 @@ class Manufacturer {
             }
         }
     }
-    // Get manufacturer by ID
     async getById(id, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Manufacturer/${id}.json`,

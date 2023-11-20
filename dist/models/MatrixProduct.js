@@ -4,7 +4,6 @@ class MatrixProduct {
     constructor(apiService) {
         this.apiService = apiService;
     }
-    // Get all Matrix Items
     async getAll(relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/ItemMatrix.json`,
@@ -26,7 +25,6 @@ class MatrixProduct {
             }
         }
     }
-    // Get Matrix Item by ID
     async getById(id, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/ItemMatrix/${id}.json`,

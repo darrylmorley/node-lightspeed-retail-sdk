@@ -4,7 +4,6 @@ class Product {
     constructor(apiService) {
         this.apiService = apiService;
     }
-    // GET all products
     async getAll(relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Item.json`,
@@ -26,7 +25,6 @@ class Product {
             }
         }
     }
-    // GET product by ID
     async getById(id, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Item/${id}.json`,
@@ -52,7 +50,6 @@ class Product {
             }
         }
     }
-    // GET products by Multiple ID's, pass an array of ids
     async getByMultipleId(ids, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Item.json`,
@@ -80,7 +77,6 @@ class Product {
             }
         }
     }
-    // GET product by Vendor ID
     async getByVendorId(vendorId, relations) {
         const options = {
             url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Item.json?defaultVendorID=${vendorId}`,
