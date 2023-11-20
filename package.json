@@ -1,9 +1,9 @@
 {
   "name": "node-lightspeed-retail-sdk",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Yet another unofficial Lightspeed Retail API SDK for Node.js",
   "main": "dist/LightspeedRetailSDK.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/LightspeedRetailSDK.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
