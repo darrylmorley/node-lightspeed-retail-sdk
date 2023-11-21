@@ -32,7 +32,7 @@ class Order {
   // Get order by ID
   async getById(id: string, relations?: string) {
     const options = {
-      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Order/${id}.json?load_relations=["Vendor", "OrderLines"]`,
+      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Order/${id}.json`,
       method: "GET",
     };
 
