@@ -57,7 +57,7 @@ class Sale {
   // Get sale by ID
   async getById(id: string, relations?: string) {
     const options = {
-      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale/${id}.json?load_relations=["Customer", "SaleLines", "SalePayments"]`,
+      url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale/${id}.json`,
       method: "GET",
     };
 
