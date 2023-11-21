@@ -42,7 +42,7 @@ class Sale {
     }
     async getById(id, relations) {
         const options = {
-            url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale/${id}.json?load_relations=["Customer", "SaleLines", "SalePayments"]`,
+            url: `${this.apiService.baseUrl}/${this.apiService.accountID}/Sale/${id}.json`,
             method: "GET",
         };
         if (!id) {
